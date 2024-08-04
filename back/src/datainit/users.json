@@ -1,0 +1,54 @@
+[
+  {
+    "email": "otto.st@gmail.com",
+    "name": "Otto Schmilinsky",
+    "birthday": "1969-05-06",
+    "password": "Admin1234.",
+    "passwordConfirm": "Admin1234.",
+    "phone": "ABC123DoReMi",
+    "address": "En SU casa",
+    "city": "Dublin",
+    "country": "Ireland",
+    "auth0Id": "otto.st@gmail.com",
+    "admin": true
+  },
+  {
+    "email": "correo@electronico.com",
+    "name": "Javier Pintor",
+    "birthday": "1969-05-06",
+    "password": "Admin1234.",
+    "passwordConfirm": "Admin1234.",
+    "phone": "123123123",
+    "address": "En SU casa",
+    "city": "Bogotá",
+    "country": "Colombia",
+    "auth0Id": "correo@electronico.com",
+    "admin": true
+  },
+  {
+    "email": "correo2@electronico.com",
+    "name": "Pedro Pérez",
+    "birthday": "1969-05-06",
+    "password": "Admin1234.",
+    "passwordConfirm": "Admin1234.",
+    "phone": "423123123",
+    "address": "En LA casa",
+    "city": "Mar de Plata",
+    "country": "Argentina",
+    "auth0Id": "correo2@electronico.com",
+    "admin": false
+  },
+  {
+    "email": "diego10@planetaTierra.com",
+    "name": "Diego Maradona",
+    "birthday": "1960-10-30",
+    "password": "Admin1234.",
+    "passwordConfirm": "Admin1234.",
+    "phone": "723123123",
+    "address": "En OTRA casa",
+    "city": "Caracas",
+    "country": "Venezuela",
+    "auth0Id": "correo3@electronico.com",
+    "admin": false
+  }
+]

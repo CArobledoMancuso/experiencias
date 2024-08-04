@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body{
+    background-color: #0b0909f0;
+    color: #ffffff
+    
+}
+
+@layer components{
+    .wrapper{
+       @apply w-[90%] mx-auto max-w-screen-xl
+       overflow-hidden;
+   
+   }
+   .neon-shadow {
+    color: #fff;
+    transition: text-shadow 0.3s ease, color 0.3s ease;
+  }
+  
+  .neon-shadow:hover {
+    text-shadow: 0 0 5px #ffffff, 0 0 10px #ffffff, 0 0 12px #ffffff, 0 0 15px #ffffff;
+    color: #fff; 
+  }
+  .red-filter:hover {
+    filter: invert(33%) sepia(89%) saturate(5067%) hue-rotate(357deg) brightness(99%) contrast(102%);
+  }
+  .green-filter:hover {
+    filter: invert(47%) sepia(98%) saturate(750%) hue-rotate(80deg) brightness(102%) contrast(101%);
+}
+}
