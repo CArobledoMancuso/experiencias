@@ -4,6 +4,9 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { auth0Config } from './config/auth0-config';
 import { auth } from 'express-openid-connect';
+import * as dotenv from 'dotenv';
+
+dotenv.config(); // Cargar variables de entorno desde .env
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -27,6 +30,8 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('apidoc', app, document);
 
-  await app.listen(3001);
+  const port = process.env.PORT || 3001; // Usa el puerto de la variable de entorno o 3001 como fallback
+  await app.listen(port);
+  console.log(`Application is running on: http://localhost:${port}`);
 }
 bootstrap();
