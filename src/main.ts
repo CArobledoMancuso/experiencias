@@ -20,6 +20,14 @@ async function bootstrap() {
   };
   app.enableCors(corsOptions);
   
+  // Middleware personalizado para agregar encabezados CORS manualmente
+  app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', process.env.FRONTEND_URL);
+    res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Accept, Authorization');
+    next();
+  });
+
   // Auth0 con express-openid-connect
   app.use(auth(auth0Config));
 
