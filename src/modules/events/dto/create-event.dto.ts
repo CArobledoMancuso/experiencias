@@ -5,6 +5,7 @@ import {
   MaxLength,
   IsDateString,
   IsNumber,
+  Min,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -16,7 +17,7 @@ export class CreateEventDto {
   @IsString()
   @IsNotEmpty()
   @MinLength(15)
-  @MaxLength(30)
+  @MaxLength(100)
   title: string;
 
   @ApiProperty({
@@ -26,7 +27,7 @@ export class CreateEventDto {
   @IsString()
   @IsNotEmpty()
   @MinLength(30)
-  @MaxLength(80)
+  @MaxLength(180)
   subtitle: string;
 
   @ApiProperty({
@@ -37,7 +38,6 @@ export class CreateEventDto {
   @IsString()
   @IsNotEmpty()
   @MinLength(80)
-  @MaxLength(300)
   description: string;
 
   @ApiProperty({
@@ -69,17 +69,19 @@ export class CreateEventDto {
   // document?: string;
 
   @ApiProperty({
-    description: 'Event max seats. Default is 8',
+    description: 'Event max seats. Default is 8 and minimum is 1.',
     example: '8',
   })
   @IsNumber()
+  @Min(1)
   maxseats: number;
 
   @ApiProperty({
-    description: 'Price per seat, default is 250 €.',
+    description: 'Price per seat, default is 250 €. Minimum is 0.',
     example: '250',
   })
   @IsNumber()
+  @Min(0)
   price: number;
 
   @ApiProperty({

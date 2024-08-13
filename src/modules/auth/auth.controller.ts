@@ -177,7 +177,10 @@ export class AuthController {
         const token = await this.authService.createToken(user);
   
         // Redirige al frontend con el token en la URL
-        return res.redirect(`http://localhost:3000/home?token=${token}`);
+
+        const frontendUrl = process.env.FRONTEND_URL;
+        return res.redirect(`${frontendUrl}/home?token=${token}`);
+
       } else {
         res.status(HttpStatus.UNAUTHORIZED).json({ message: 'User not authenticated' });
       }
@@ -198,12 +201,13 @@ export class AuthController {
   async logout(@Res() res: Response) {
     try {
       // URL de logout de Auth0 con redirección al frontend
-      const auth0LogoutUrl = `https://dev-fn7ponuffmtdsgxd.us.auth0.com/v2/logout?client_id=uHDJXNkx12Blk0w3PgCUTvfdIS384YAA&returnTo=${encodeURIComponent('http://localhost:3000/home')}`;
+      const frontendUrl = process.env.FRONTEND_URL;
+      const auth0LogoutUrl = `${process.env.AUTH0_ISSUER_BASE_URL}/v2/logout?client_id=${process.env.AUTH0_CLIENT_ID}&returnTo=${encodeURIComponent(frontendUrl + '/home')}`;
 
       // Redirige a la URL de logout de Auth0 que luego redirige al frontend
       return res.redirect(auth0LogoutUrl);
     } catch (error) {
       return res.status(500).json({ message: 'Error logging out', error });
-    }
-  }
+    }
+  }
 }

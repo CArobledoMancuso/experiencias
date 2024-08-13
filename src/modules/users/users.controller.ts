@@ -52,6 +52,17 @@ export class UsersController {
       if (createUserDto.password !== createUserDto.passwordConfirm) {
         throw new BadRequestException('Controller. Passwords do not match.');
       }
+      // validar si tiene fecha de nacimiento y es mayor de 18 años.
+      if (createUserDto.birthday) {
+        const age =
+          new Date().getFullYear() -
+          new Date(createUserDto.birthday).getFullYear();
+        if (age < 18) {
+          throw new BadRequestException(
+            'Controller. User must be at least 18 years old.',
+          );
+        }
+      }
       const userCreated = await this.usersService.create(createUserDto);
       return userCreated;
     } catch (err: any) {
@@ -116,6 +127,17 @@ export class UsersController {
           HttpStatus.NOT_FOUND,
         );
       } else {
+        // validar si tiene fecha de nacimiento y se es mayor de edad de 18 años.
+        if (updateUserDto.birthday) {
+          const age =
+            new Date().getFullYear() -
+            new Date(updateUserDto.birthday).getFullYear();
+          if (age < 18) {
+            throw new BadRequestException(
+              'Controller. User must be at least 18 years old.',
+            );
+          }
+        }
         return this.usersService.update(+id, updateUserDto);
       }
     } catch (error) {
@@ -143,7 +165,7 @@ export class UsersController {
     try {
       const user = await this.usersService.remove(+id);
       if (!user) {
-        throw new Error('User to delete was not found');
+        throw new BadRequestException(`User not found`);
       }
       user.password = null;
       return user;
@@ -174,7 +196,9 @@ export class UsersController {
     try {
       const users = await this.usersService.usersWithBookingsAndEvents();
       if (!users) {
-        throw new Error('Users with bookings and events not found');
+        throw new BadRequestException(
+          `Users with bookings and events not found`,
+        );
       }
       return users;
     } catch (error) {
@@ -193,7 +217,7 @@ export class UsersController {
       console.log(`findOne(@Param('id') ${id}: string)`, user);
 
       if (!user) {
-        throw new Error('User not found');
+        throw new BadRequestException(`User not found`);
       }
       user.password = null;
       return user;

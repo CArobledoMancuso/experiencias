@@ -9,8 +9,10 @@ import {
   HttpException,
   HttpStatus,
   HttpCode,
+  BadRequestException,
 } from '@nestjs/common';
 import { BookingService } from './booking.service';
+import { EventsService } from '../events/events.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -18,7 +20,10 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger';
 @Controller('booking')
 @ApiTags('bookings')
 export class BookingController {
-  constructor(private readonly bookingService: BookingService) {}
+  constructor(
+    private readonly bookingService: BookingService,
+    private readonly eventsService: EventsService,
+  ) {}
 
   @Get('seeder')
   @HttpCode(HttpStatus.CREATED)
@@ -34,6 +39,23 @@ export class BookingController {
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createBookingDto: CreateBookingDto) {
     try {
+      if (new Date(createBookingDto.date) < new Date()) {
+        throw new HttpException(
+          'The date cannot be in the past.',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      const event =
+        await this.eventsService.eventDetailCountingBookingsAndPersons(
+          createBookingDto.eventsId,
+        );
+      const available = event.maxseats - event.totalPersons;
+      if (createBookingDto.quantity > available) {
+        throw new HttpException(
+          `There are only ${available} seats available.`,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
       const booking = await this.bookingService.create(createBookingDto);
       return booking;
     } catch (error) {
@@ -67,7 +89,7 @@ export class BookingController {
     try {
       const booking = await this.bookingService.findOne(+idUser, +idEvent);
       if (!booking) {
-        throw new Error(
+        throw new BadRequestException(
           `Booking not found for user ${idUser} and event ${idEvent}`,
         );
       }
@@ -86,7 +108,7 @@ export class BookingController {
     try {
       const booking = await this.bookingService.findOneByEvent(+idEvent);
       if (!booking) {
-        throw new Error(`Booking not found for event ${idEvent}`);
+        throw new BadRequestException(`Booking not found for event ${idEvent}`);
       }
       return booking;
     } catch (error) {
@@ -103,7 +125,7 @@ export class BookingController {
     try {
       const booking = await this.bookingService.findOneByUser(+idUser);
       if (!booking) {
-        throw new Error(`Booking not found for user ${idUser}`);
+        throw new BadRequestException(`Booking not found for user ${idUser}`);
       }
       return booking;
     } catch (error) {

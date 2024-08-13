@@ -11,7 +11,7 @@ import {
   HttpStatus,
   BadRequestException,
   HttpException,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 
 import { AuthGuard } from 'src/guards/auth/auth.guard';
@@ -21,19 +21,16 @@ import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 
-
 import {
   ApiTags,
   ApiBearerAuth,
   ApiResponse,
   ApiUnauthorizedResponse,
-  
 } from '@nestjs/swagger';
 @ApiTags('events')
 @Controller('events')
 export class EventsController {
-  constructor(private readonly eventsService: EventsService
-  ) {}
+  constructor(private readonly eventsService: EventsService) {}
 
   @Get('seeder')
   @HttpCode(HttpStatus.CREATED)
@@ -47,19 +44,18 @@ export class EventsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
- 
   @ApiResponse({
     status: 201,
     description: 'The record has been successfully created.',
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  async create(
-    @Body() createEventDto: CreateEventDto) {
+  async create(@Body() createEventDto: CreateEventDto) {
     try {
-        const eventCreated = await this.eventsService.create(createEventDto);
-        return eventCreated;
-      
-     
+      if (new Date(createEventDto.date) < new Date()) {
+        throw new BadRequestException('The date cannot be in the past.');
+      }
+      const eventCreated = await this.eventsService.create(createEventDto);
+      return eventCreated;
     } catch (err: any) {
       throw new BadRequestException('Error creating an event. ' + err.message);
     }
@@ -98,6 +94,12 @@ export class EventsController {
       if (!event) {
         throw new HttpException('Event not found. ', HttpStatus.NOT_FOUND);
       } else {
+        if (new Date(updateEventDto.date) <= new Date()) {
+          throw new HttpException(
+            'Event date must be greater than today. ',
+            HttpStatus.BAD_REQUEST,
+          );
+        }
         return this.eventsService.update(+id, updateEventDto);
       }
     } catch (error) {
@@ -152,7 +154,7 @@ export class EventsController {
     try {
       const events = await this.eventsService.findEventsWithBookingsAndUsers();
       if (!events) {
-        throw new Error('Events not found');
+        throw new BadRequestException(`Events not found`);
       }
       return events;
     } catch (error) {
@@ -175,7 +177,7 @@ export class EventsController {
       const events =
         await this.eventsService.eventsCountingBookingsAndPersons();
       if (!events) {
-        throw new Error('Events not found');
+        throw new BadRequestException(`Events not found`);
       }
       return events;
     } catch (error) {
@@ -195,7 +197,7 @@ export class EventsController {
       const eventWithBookings =
         await this.eventsService.eventDetailCountingBookingsAndPersons(+id);
       if (!eventWithBookings) {
-        throw new Error('Event not found');
+        throw new BadRequestException(`Event not found`);
       }
       return eventWithBookings;
     } catch (error) {
@@ -213,7 +215,7 @@ export class EventsController {
     try {
       const event = await this.eventsService.findOne(+id);
       if (!event) {
-        throw new Error('Event not found');
+        throw new BadRequestException(`Event not found`);
       }
       return event;
     } catch (error) {
