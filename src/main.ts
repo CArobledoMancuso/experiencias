@@ -5,6 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { auth0Config } from './config/auth0-config';
 import { auth } from 'express-openid-connect';
 import * as dotenv from 'dotenv';
+import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 
 dotenv.config(); // Cargar variables de entorno desde .env
 
@@ -12,11 +13,12 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
   // CORS usando la variable de entorno FRONTEND_URL
-  app.enableCors({
-    origin: process.env.FRONTEND_URL, // Usa el valor de FRONTEND_URL o localhost como fallback
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
-  });
+  const corsOptions: CorsOptions = {
+    origin: process.env.FRONTEND_URL, // Especifica el origen permitido
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: 'Content-Type, Accept, Authorization',
+  };
+  app.enableCors(corsOptions);
   
   // Auth0 con express-openid-connect
   app.use(auth(auth0Config));
