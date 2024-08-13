@@ -13,7 +13,7 @@ async function bootstrap() {
   
   // CORS usando la variable de entorno FRONTEND_URL
   app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000', // Usa el valor de FRONTEND_URL o localhost como fallback
+    origin: process.env.FRONTEND_URL, // Usa el valor de FRONTEND_URL o localhost como fallback
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
